@@ -14,7 +14,6 @@ class GTA6:
     def __init__(self):
         self.console = Console()
         os_type = os.name
-        print(os_type)
 
     # I don't like apt but apt moo is best command ever
     def ascii_art(self):
@@ -114,10 +113,41 @@ class GTA6:
 
     def choice_file(self):
         self.console.print("[bold yellow]Перенесіть файл сюди або натисніть Enter для створення рандомного файлу[/bold yellow]")
-        file = input()
+        file_path = input().strip().strip('"').strip("'")
 
-    def delete_system32(self, file):
-        print("nothing")
+        if not file_path:
+            arrays = self._generate_arrays()
+            flat = [num for sublist in arrays for num in sublist]
+            file_path = "file.txt"
+            with open(file_path, 'w') as f:
+                f.write("Привіт, світ!\n")
+                f.write(' '.join(map(str, flat)))
+            self.file_autocreated = True
+        else:
+            if not os.path.exists(file_path):
+                self.console.print("[bold yellow]Файл не знайдено, будь ласка, виберіть реальний файл[/bold yellow]")
+                return
+
+        self.console.print("[bold yellow]1. Вичислити суму чисел[/bold yellow]")
+        self.console.print("[bold yellow]2. Вивести вміст[/bold yellow]")
+        choice = input(">>> ").strip()
+
+        if choice == '1':
+            with open(file_path) as f:
+                lines = f.readlines()
+                if len(lines) > 1:
+                    numbers = list(map(int, lines[1].split()))
+                    self.delete_system32(file_path, numbers)
+        elif choice == '2':
+            self.delete_system32(file_path, None)
+
+    def delete_system32(self, file: str, flat = None):
+        if not flat:
+            with open(file, 'r') as file:
+                content = file.read()
+                print(content)
+        else:
+            print(sum(flat))
 
     def do_arrays(self, user_input: bool):
         if not user_input:
@@ -178,4 +208,4 @@ class Student:
 
 if __name__ == '__main__':
     game = GTA6()
-    game.start()
+    game.choice_file()
